@@ -1,0 +1,16 @@
+
+{% extends "admin/index.html" %}
+
+{% block content %}
+
+<div class="module">
+    <h2>Purchase Stats</h2>
+    <p>
+        <a href="{% url 'top_purchaser' %}">
+            View Top top_purchaser
+        </a>
+    </p>
+</div>
+
+{{ block.super }}
+{% endblock %}

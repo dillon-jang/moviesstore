@@ -5,6 +5,9 @@ from movies.models import Movie
 from .utils import calculate_cart_total
 from .models import Order, Item
 from django.contrib.auth.decorators import login_required
+from django.contrib import admin
+from django.db.models import Sum
+
 
 def index(request):
     cart_total = 0
@@ -61,3 +64,31 @@ def purchase(request):
     template_data['title'] = 'Purchase confirmation'
     template_data['order_id'] = order.id
     return render(request, 'cart/purchase.html', {'template_data': template_data})
+
+@login_required
+def top_purchaser(request):
+    purchase_totals = (
+        Item.objects
+        .values("order__user_id", "order__user__username")
+        .annotate(movie_count=Sum("quantity"))
+        .filter(movie_count__gt=0)
+        .order_by("-movie_count", "order__user__username")
+    )
+
+    highest_total = purchase_totals.first()
+    top_users = []
+
+    if highest_total:
+        top_users = purchase_totals.filter(
+            movie_count=highest_total["movie_count"]
+        )
+
+    template_data = admin.site.each_context(request)
+    template_data["title"] = "Top Purchaser"
+    template_data["top_users"] = top_users
+
+    return render(
+        request,
+        "admin/top_purchaser.html",
+        template_data
+    )
