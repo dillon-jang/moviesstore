@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-3">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-8 mx-auto mb-3">
+        <h2>User Engagement</h2>
+        <hr />
+
+        {% if template_data.top_user %}
+        <div class="card shadow p-3 mb-4 rounded">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Most Active Reviewer</h6>
+            <h4 class="card-title mb-0">
+              {{ template_data.top_user.username }}
+              {{ template_data.top_user.comment_count }}
+              comment{{ template_data.top_user.comment_count|pluralize }}
+            </h4>
+          </div>
+        </div>
+        <table class="table table-stiped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">User</th>
+              <th scope="col">Comments posted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in template_data.users %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ u.username }}</td>
+              <td>{{ u.comment_count }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p>No comments have been posted yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
