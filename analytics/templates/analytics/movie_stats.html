@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-3">
+    <div class="container">
+        <h2>Movie Statistics</h2>
+        <hr />
+
+        <p><b> Most bought </b>
+        {% if template_data.most_bought %}
+        {{ template_data.most_bought.name }} has been bought the most times ({{ template_data.most_bought_count }} times).
+        {% else %}
+        <p>No movies have been purchased yet.</p>
+        {% endif %}
+        </p>
+
+        <p><b> Most reviewed </b>
+        {% if template_data.most_reviewed %}
+        {{ template_data.most_reviewed.name }} has been reviewed the most times ({{ template_data.most_reviewed_count }} times).
+        {% else %}
+        <p>No movies have been reviewed yet.</p>
+        {% endif %}
+        </p>
+
+    </div>
+</div>
+{% endblock content %}

@@ -46,6 +46,7 @@
             {% if user.is_authenticated %}
             {% if user.is_staff %}
             <a class="nav-link" href="{% url 'analytics.top_commenters' %}">Engagement</a>
+            <a class="nav-link" href="{% url 'analytics.movie_stats' %}">Stats</a>
             {% endif %}
             <a class="nav-link" href="{% url 'accounts.orders' %}">Orders</a>
             <a class="nav-link" href="{% url 'accounts.logout' %}">Logout ({{user.username }})</a>
