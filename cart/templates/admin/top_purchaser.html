@@ -1,0 +1,38 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class = "module">
+    <h2>User with Most Movies Purchased</h2>
+
+    {% if top_users %}
+        <table>
+            <thead>
+                <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Movies Purchased</th>
+            </tr>
+            </thead>
+
+            <tbody>
+                {% for user in top_users %}
+                <tr>
+                    <td> {{ user.order__user__username}} </td>
+                    <td> {{ user.movie_count }}</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p> Showing all users tied for highest total.</p>
+        {% else %}
+        <p> No movies have been purchased so far.</p>
+        {% endif %}
+
+</div>
+
+<p>
+    <a href="{% url 'admin:index' %}">Back to Admin</a>
+</p>
+
+{% endblock %}
