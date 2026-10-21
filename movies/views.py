@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Movie, Review
+from .models import Movie, Review, Rating
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Avg
 
 def index(request):
     search_term = request.GET.get('search')
@@ -19,10 +19,16 @@ def index(request):
 def show(request, id):
     movie = Movie.objects.get(id=id)
     reviews = Review.objects.filter(movie=movie)
+    average_rating = movie.ratings.aggregate(Avg('score'))['score__avg']
+    user_rating = None
+    if request.user.is_authenticated:
+        user_rating = Rating.objects.filter(movie=movie, user=request.user).first()
     template_data = {}
     template_data['title'] = movie.name
     template_data['movie'] = movie
     template_data['reviews'] = reviews
+    template_data['average_rating'] = average_rating
+    template_data['user_rating'] = user_rating
     return render(request, 'movies/show.html', {'template_data': template_data})
 
 @login_required
@@ -68,4 +74,19 @@ def delete_review(request, id, review_id):
 def report_review(request, id, review_id):
     review = get_object_or_404(Review, id=review_id)
     review.delete()
+    return redirect('movies.show', id=id)
+
+@login_required
+def create_rating(request, id):
+    if request.method != 'POST':
+        return redirect('movies.show', id=id)
+    movie = get_object_or_404(Movie, id=id)
+
+    try:
+        score = int(request.POST.get('score', ''))
+    except (ValueError, TypeError):
+        return redirect('movies.show', id=id)
+    if score < 1 or score > 5:
+        return redirect('movies.show', id=id)
+    Rating.objects.update_or_create(movie=movie, user=request.user, defaults={'score': score})
     return redirect('movies.show', id=id)

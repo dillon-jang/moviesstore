@@ -27,6 +27,71 @@
             </form>
           </p>
 
+        <!-- Movie Rating Section -->
+         <div class="card shadow p-3 mt-4 mb-4 rounded">
+            <div class="card-body">
+              <h3>Movie Rating</h3>
+              <hr />
+              <p>
+                <b>Average Rating:</b>
+                {% if template_data.average_rating != None %}
+
+                {{ template_data.average_rating|floatformat:1 }} / 5 ★
+                {% else %}
+                Not Rated yet
+                {% endif %}
+              </p>
+              
+              <p>
+                <b>Your Rating:</b>
+                {% if user.is_authenticated %}
+                  {% if template_data.user_rating %}
+
+                  {{ template_data.user_rating.score }} / 5 ★
+                {% else %}
+                  You haven't rated this movie yet!
+                  {% endif %}
+                {% else %}
+                Log in to see your rating!
+                {% endif %}
+              </p>
+
+              {% if user.is_authenticated %}
+              <form method="POST" action="{% url 'movies.create_rating' id=template_data.movie.id %}">
+                {% csrf_token %}
+                <label for="score">
+                  {% if template_data.user_rating %}
+                  Your rating:
+                  {% else %}
+                  Rate this movie:
+                  {% endif %}
+                </label>
+                <select name="score" id="score" class="form-select mb-3" required>
+                  <option value="">Select a rating</option>
+                  {% for number in "12345" %}
+                    <option value="{{ number }}"
+                      {% if template_data.user_rating and template_data.user_rating.score|stringformat:"s" == number %}
+                      selected
+                      {% endif %}>
+                      {{ number }} star{% if number != "1" %}s{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <button class="btn bg-dark text-white" type="submit">
+                  {% if template_data.user_rating %}
+                  Update Rating
+                  {% else %}
+                  Update Rating
+                  {% endif %}
+
+                </button>
+              </form>
+              {% else %}
+              <p>Please log in to rate this movie!</p>
+              {% endif %}
+            </div>
+         </div>
 
         <h2>Reviews</h2>
         <hr />
